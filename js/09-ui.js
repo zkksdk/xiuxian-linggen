@@ -45,7 +45,8 @@ UI.TABS = [
 /* 旧标签 → 新「标签:子页」映射，保证历史链接与指引跳转不失效 */
 UI.LEGACY = {
   bag:'character:bag', alchemy:'workshop:alch', forge:'workshop:forge',
-  formation:'workshop:form', codex:'misc:codex', settings:'misc:settings'
+  formation:'workshop:form', codex:'misc:codex', settings:'misc:settings',
+  skill:'character:skill', equip:'character:equip'
 };
 UI.sub = {};
 
@@ -106,6 +107,7 @@ UI.handle = function(act, arg, el){
 
     case 'goalGo': UI.goalGo(arg); break;
     case 'subtab': UI.sub[UI.tab] = arg; UI.renderView(); break;
+    case 'statToggle': UI.statOpen = !UI.statOpen; UI.renderLeft(); break;
     case 'misPick': UI.openMissionPick(arg); break;
     case 'reforge': if (G2.reforge(arg)) UI.afterDetail(arg); else UI.renderAll(); break;
 
@@ -318,6 +320,18 @@ UI.renderLeft = function(){
   var b = G.gatherBonuses();
   var ad = G.arrayDetail();
   var h = '';
+  /* 移动端默认折叠成一行摘要，把主按钮顶到首屏 */
+  var narrow = (window.innerWidth <= 960);
+  if (narrow && !UI.statOpen){
+    UI.$colL.innerHTML = '<div class="card tight statline" data-act="statToggle">' +
+      '<span class="sl">战力 <b>'+U.fmt(st.power||0)+'</b></span>' +
+      '<span class="sl">气血 <b>'+U.fmt(st.hp||0)+'</b></span>' +
+      '<span class="sl">攻 <b>'+(st.atk||0).toFixed(0)+'</b></span>' +
+      '<span class="sl">防 <b>'+(st.def||0).toFixed(0)+'</b></span>' +
+      '<span class="sl">速 <b>'+(st.spd||0).toFixed(1)+'</b></span>' +
+      '<span class="sl more">详情 ›</span></div>';
+    return;
+  }
   h += '<div class="card tight"><h3>道体 <small>'+D.realmOf(G.node).n+'</small></h3><div class="statgrid">' +
     '<div class="kv"><span>战力</span><b>'+U.fmt(st.power||0)+'</b></div>' +
     '<div class="kv"><span>气血</span><b>'+U.fmt(st.hp||0)+'</b></div>' +
@@ -344,6 +358,7 @@ UI.renderLeft = function(){
        '<div class="kv small"><span>法宝</span><b>'+G.treasures.length+' 件</b></div>' +
        '<div class="kv small"><span>转世</span><b>第 '+((G.rebirth.count||0)+1)+' 世</b></div>' +
        '</div>';
+  if (narrow) h = '<div class="card tight statline" data-act="statToggle"><span class="sl more">收起 ‹</span></div>' + h;
   UI.$colL.innerHTML = h;
 };
 
@@ -902,7 +917,7 @@ UI.goalGo = function(i){
   var g = G.goals()[parseInt(i, 10)];
   if (!g) return;
   if (g.act) UI.handle(g.act, g.arg, null);
-  else UI.switchTab(g.tab);
+  UI.switchTab(g.tab);      // 无论有没有动作，都跳到相关页面
   UI.renderAll();
 };
 
