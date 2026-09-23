@@ -21,20 +21,33 @@ UI.dirtyLog = false;
 UI.TABS = [
   /* 第一行：主循环 */
   { k:'cultivate', n:'修炼' },
-  { k:'character', n:'人物', u:'roots' },
-  { k:'bag',       n:'背包', u:'roots' },
-  { k:'array',     n:'灵阵', u:'array' },
+  { k:'character', n:'人物', u:'roots', subs:[
+      { k:'equip', n:'装备',   v:'view_character' },
+      { k:'skill', n:'功法栏', v:'view_character' },
+      { k:'bag',   n:'行囊',   v:'view_bag'       }
+  ]},
   { k:'roots',     n:'灵根', u:'roots' },
+  { k:'array',     n:'灵阵', u:'array' },
   { k:'explore',   n:'探索', u:'explore' },
-  { k:'rebirth',   n:'轮回', u:'rebirth' },
   /* 第二行：辅助 */
-  { k:'alchemy',   n:'丹房', u:'alch' },
-  { k:'forge',     n:'器坊', u:'forge' },
-  { k:'formation', n:'阵法', u:'form' },
   { k:'sect',      n:'宗门', u:'sect' },
-  { k:'codex',     n:'志录' },
-  { k:'settings',  n:'设置' }
+  { k:'rebirth',   n:'轮回', u:'rebirth' },
+  { k:'workshop',  n:'工坊', u:'alch', subs:[
+      { k:'alch',  n:'炼丹', v:'view_alchemy'   },
+      { k:'forge', n:'炼器', v:'view_forge'     },
+      { k:'form',  n:'阵法', v:'view_formation' }
+  ]},
+  { k:'misc',      n:'杂录', subs:[
+      { k:'codex',    n:'见闻', v:'view_codex'    },
+      { k:'settings', n:'设置', v:'view_settings' }
+  ]}
 ];
+/* 旧标签 → 新「标签:子页」映射，保证历史链接与指引跳转不失效 */
+UI.LEGACY = {
+  bag:'character:bag', alchemy:'workshop:alch', forge:'workshop:forge',
+  formation:'workshop:form', codex:'misc:codex', settings:'misc:settings'
+};
+UI.sub = {};
 
 /* =====================  初始化  ===================== */
 UI.init = function(){
@@ -92,6 +105,7 @@ UI.handle = function(act, arg, el){
     case 'usePresetPill': G2.usePresetPill(arg); break;
 
     case 'goalGo': UI.goalGo(arg); break;
+    case 'subtab': UI.sub[UI.tab] = arg; UI.renderView(); break;
     case 'misPick': UI.openMissionPick(arg); break;
     case 'reforge': if (G2.reforge(arg)) UI.afterDetail(arg); else UI.renderAll(); break;
 
@@ -198,17 +212,20 @@ UI.handle = function(act, arg, el){
 
 /* =====================  标签栏  ===================== */
 UI.switchTab = function(k){
+  var m = UI.LEGACY[k];
+  if (m){ var p = m.split(':'); UI.tab = p[0]; UI.sub[p[0]] = p[1]; }
+  else UI.tab = k;
   var def = null;
-  UI.TABS.forEach(function(t){ if (t.k === k) def = t; });
+  UI.TABS.forEach(function(t){ if (t.k === UI.tab) def = t; });
   if (def && def.u && !G.unlock[def.u]){
     var hint = { roots:'境界再进一层', array:'境界再进一层', explore:'修至炼气', alch:'修至炼气',
                  forge:'修至筑基', form:'修至筑基', sect:'修至筑基', rebirth:'修至筑基' };
     U.toast('此路尚未开启——' + (hint[def.u] || '继续修行'));
     return;
   }
-  UI.tab = k;
   UI.renderTabs(); UI.renderView();
 };
+UI.goto = function(k){ UI.switchTab(k); };
 UI.renderTabs = function(){
   var h = '';
   UI.TABS.forEach(function(t){
@@ -361,10 +378,30 @@ UI.renderRight = function(){
 
 /* =====================  中间视图  ===================== */
 UI.renderView = function(){
-  var fn = UI['view_'+UI.tab];
-  if (!fn){ UI.$view.innerHTML = '<div class="empty">此路未开</div>'; return; }
-  UI.$view.innerHTML = fn.call(UI);
-  if (UI[UI.tab+'_after']) UI[UI.tab+'_after']();
+  var def = null;
+  UI.TABS.forEach(function(t){ if (t.k === UI.tab) def = t; });
+  var h = '';
+  if (def && def.subs && def.subs.length){
+    var cur = UI.sub[UI.tab];
+    if (!cur || !def.subs.some(function(s){ return s.k === cur; })) cur = def.subs[0].k;
+    UI.sub[UI.tab] = cur;
+    h += '<div class="subbar">';
+    def.subs.forEach(function(s){
+      h += '<span class="subtab' + (s.k === cur ? ' on' : '') + '" data-act="subtab" data-arg="' + s.k + '">' + s.n + '</span>';
+    });
+    h += '</div>';
+    var sd = null;
+    def.subs.forEach(function(s){ if (s.k === cur) sd = s; });
+    var fn = sd ? UI[sd.v] : null;
+    if (!fn){ UI.$view.innerHTML = h + '<div class="empty">此路未开</div>'; return; }
+    h += fn.call(UI);
+  } else {
+    var fn2 = UI['view_' + UI.tab];
+    if (!fn2){ UI.$view.innerHTML = '<div class="empty">此路未开</div>'; return; }
+    h = fn2.call(UI);
+  }
+  UI.$view.innerHTML = h;
+  if (UI[UI.tab + '_after']) UI[UI.tab + '_after']();
 };
 
 /* =====================  提示条  ===================== */
