@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#12130f">
+<title>灵根演化 · 问道长生</title>
+<link rel="stylesheet" href="css/style.css?v=69">
+<script>
+/* 早期错误捕获：必须放在所有脚本之前。
+   否则当 10-main.js 自身有语法错误时，它内部的监听器根本没机会注册，
+   页面会静默卡在启动遮罩上，什么都不报。 */
+window.__errs = [];
+window.addEventListener('error', function(e){
+  try{
+    window.__errs.push(e.message);
+    var bar = document.getElementById('errbar');
+    if (!bar) return;
+    bar.classList.remove('hidden');
+    bar.innerHTML += '<div>⚠ ' + (e.message || 'error') + ' @ ' +
+      String(e.filename || '').split('/').pop() + ':' + (e.lineno || 0) + '</div>';
+  }catch(_){}
+});
+</script>
+</head>
+<body>
+
+<!-- ===== 水墨山水背景 ===== -->
+<div id="bg">
+<svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#161a1c"/><stop offset="42%" stop-color="#20231f"/><stop offset="100%" stop-color="#0e100d"/>
+    </linearGradient>
+    <radialGradient id="g-moon">
+      <stop offset="0%" stop-color="#f2ead2" stop-opacity=".9"/><stop offset="40%" stop-color="#e6dcc0" stop-opacity=".2"/><stop offset="100%" stop-color="#e6dcc0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="g-mist" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#cfd6cc" stop-opacity="0"/><stop offset="100%" stop-color="#cfd6cc" stop-opacity=".1"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#g-sky)"/>
+  <circle cx="905" cy="150" r="190" fill="url(#g-moon)"/>
+  <circle cx="905" cy="150" r="44" fill="#efe6cd" opacity=".5"/>
+  <path d="M-40,560 C90,470 175,505 260,432 C345,358 405,452 480,486 C560,522 622,470 720,536 L760,800 L-40,800 Z" fill="#171a15" opacity=".92"/>
+  <path d="M380,620 C500,500 585,540 690,455 C795,370 880,470 985,512 C1090,554 1150,528 1240,588 L1240,800 L380,800 Z" fill="#1e221b" opacity=".8"/>
+  <path d="M-40,690 C140,630 300,700 460,668 C620,636 780,706 950,682 C1090,662 1180,700 1240,690 L1240,800 L-40,800 Z" fill="#242a20" opacity=".95"/>
+  <ellipse cx="600" cy="608" rx="640" ry="54" fill="url(#g-mist)"/>
+  <ellipse cx="300" cy="534" rx="430" ry="34" fill="url(#g-mist)"/>
+</svg>
+</div>
+
+<!-- ===== 主界面 ===== -->
+<div id="app">
+  <header id="hud"></header>
+
+  <main id="main">
+    <aside id="colL" class="panel scroll"></aside>
+    <section id="center">
+      <div id="view"></div>
+    </section>
+    <aside id="colR" class="panel scroll"></aside>
+  </main>
+
+  <nav id="tabs"></nav>
+</div>
+
+<!-- 战斗浮层 -->
+<div id="battle" class="hidden"></div>
+<!-- 弹窗层 -->
+<div id="modal-layer"></div>
+<!-- 提示 -->
+<div id="toasts"></div>
+<!-- 启动遮罩 -->
+<div id="boot"><div class="boot-inner"><div class="boot-zi">道</div><div class="boot-txt">凝神聚气……</div></div></div>
+<!-- 错误横幅 -->
+<div id="errbar" class="hidden"></div>
+
+<!-- ===== 脚本（普通脚本，非 ES module，可直接以 file:// 双击运行） ===== -->
+<script src="js/00-util.js?v=69"></script>
+<script src="js/01-data.js?v=69"></script>
+<script src="js/01b-content.js?v=69"></script>
+<script src="js/02-state.js?v=69"></script>
+<script src="js/02b-gen.js?v=69"></script>
+<script src="js/02c-depth.js?v=69"></script>
+<script src="js/03-cultivate.js?v=69"></script>
+<script src="js/04-array.js?v=69"></script>
+<script src="js/05-alchemy.js?v=69"></script>
+<script src="js/06-sect.js?v=69"></script>
+<script src="js/07-combat.js?v=69"></script>
+<script src="js/08-rebirth.js?v=69"></script>
+<script src="js/09-ui.js?v=69"></script>
+<script src="js/09b-views.js?v=69"></script>
+<script src="js/10-main.js?v=69"></script>
+</body>
+</html>
