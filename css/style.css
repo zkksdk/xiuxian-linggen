@@ -285,6 +285,12 @@ button.danger:hover{background:linear-gradient(180deg,#6b2b24,#3d1914);border-co
 .statgrid{display:grid;grid-template-columns:1fr;gap:0}
 @media (max-width:960px){ .statgrid{grid-template-columns:1fr 1fr;gap:0 14px} }
 
+/* ---------- 移动端状态摘要条 ---------- */
+.statline{display:flex;gap:11px;align-items:center;flex-wrap:wrap;cursor:pointer;padding:7px 10px;margin-bottom:6px}
+.statline .sl{font-size:12px;color:var(--muted);white-space:nowrap}
+.statline .sl b{color:var(--gold-lt);font-weight:normal}
+.statline .more{color:var(--gold);margin-left:auto}
+
 /* ---------- 子页切换条 ---------- */
 .subbar{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap}
 .subtab{
