@@ -270,10 +270,10 @@ G.goals = function(){
   var freeSkill = (sl.active - G.skills.active.length) + (sl.passive - G.skills.passive.length);
   var unEq = 0; for (var id in G.techs){ if (!G.isTechEquipped(id)) unEq++; }
   if (freeSkill > 0 && unEq > 0)
-    push(70, '装备功法', '功法栏还有 ' + freeSkill + ' 个空位，' + unEq + ' 门已参悟的功法待装入', 'character', 'autoEquipTech');
+    push(70, '装备功法', '功法栏还有 ' + freeSkill + ' 个空位，' + unEq + ' 门已参悟的功法待装入', 'skill', 'autoEquipTech');
 
   if (G.shards >= 1)
-    push(66, '参悟功法', '有 ' + G.shards + ' 枚功法碎片可用', 'cultivate', 'techAuto');
+    push(66, '参悟功法', '有 ' + G.shards + ' 枚功法碎片可用', 'skill', 'techAuto');
 
   var cheap = 99999;
   D.STARS.forEach(function(s){ if (G.starLv(s.k) < s.max){ var c = G.starCost(s.k); if (c < cheap) cheap = c; } });
