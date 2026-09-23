@@ -223,7 +223,8 @@ UI.view_character = function(){
   var sl = G.skillSlots();
   var h = '';
 
-  /* --- 装备栏 --- */
+  /* --- 装备栏（仅「装备」子页） --- */
+  if (UI.sub[UI.tab] !== 'skill'){
   h += '<div class="card"><h3>装备栏 <small>装备灵力 '+U.fmt(ed.P)+'　·　'+ed.count+' / '+D.EQ_SLOTS.length+'</small></h3>';
   h += '<div class="eqgrid">';
   D.EQ_SLOTS.forEach(function(s){
@@ -261,7 +262,10 @@ UI.view_character = function(){
     h += '</div>';
   }
 
-  /* --- 功法栏 --- */
+  }
+
+  /* --- 功法栏（仅「功法栏」子页） --- */
+  if (UI.sub[UI.tab] === 'skill'){
   h += '<div class="card"><h3>功法栏 <small>主动 '+G.skills.active.length+'/'+sl.active+'　·　被动 '+G.skills.passive.length+'/'+sl.passive+'</small></h3>';
   h += '<div class="btnrow" style="margin:0 0 6px">' +
        '<button data-act="autoEquipTech">自动配装</button>' +
@@ -298,6 +302,8 @@ UI.view_character = function(){
     }
   });
   h += '</div>';
+
+  }
 
   /* --- 装备带来的加成明细 --- */
   var rows = [];
