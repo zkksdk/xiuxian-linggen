@@ -318,10 +318,17 @@ UI.view_character = function(){
   var NAMES = { atk:'攻击', def:'防御', hp:'气血', spd:'速度', crit:'暴击', cdmg:'暴伤', dodge:'闪避',
                 cult:'修炼', heal:'回复', alch:'炼丹', forg:'炼器', form:'阵法', sect:'宗门产出',
                 luck:'机缘', all:'全属性', heart:'道心', karma:'因果', herb:'灵草' };
+  /* 数值制字段（攻/防/血/速/混元/道心/因果）直接显示数字，其余按百分比 */
+  var FLATK = { atk:1, def:1, hp:1, spd:1, mix:1, heart:1, karma:1 };
+  var FLATMIN = { atk:0.5, def:0.5, hp:5, spd:0.1, mix:0.5, heart:1, karma:1 };
   for (var k2 in ed.add){
-    if (!ed.add[k2] || Math.abs(ed.add[k2]) < 0.0001) continue;
-    rows.push('<div class="kv"><span>'+(NAMES[k2]||k2)+'</span><b class="'+(ed.add[k2]>=0?'pos':'neg')+'">' +
-              (ed.add[k2] >= 0 ? '+' : '') + U.pct(ed.add[k2], 1) + '</b></div>');
+    var fv = ed.add[k2];
+    if (!fv) continue;
+    if (FLATK[k2] ? Math.abs(fv) < (FLATMIN[k2] || 0.5) : Math.abs(fv) < 0.0005) continue;
+    var txt = (FLATK[k2])
+      ? ((fv >= 0 ? '+' : '') + (Math.abs(fv) < 20 ? (Math.round(fv * 10) / 10) : U.fmt(fv)))
+      : ((fv >= 0 ? '+' : '') + U.pct(fv, 1));
+    rows.push('<div class="kv"><span>'+(NAMES[k2]||k2)+'</span><b class="'+(fv>=0?'pos':'neg')+'">' + txt + '</b></div>');
   }
   h += '<div class="card tight"><h3>装备加成</h3>';
   h += rows.length ? '<div class="statgrid">' + rows.join('') + '</div>' : '<div class="empty">尚未佩戴任何法宝</div>';
@@ -643,7 +650,7 @@ UI.view_array = function(){
       (rel==='sheng'||rel==='bei')?'<span class="tag jade">相生 ×1.12</span>' : (rel==='ke'||rel==='beke')?'<span class="tag cinn">相克 ×0.78</span>' : '<span class="tag mute">无关 ×1.00</span>';
     h += '<div class="list-item"><div class="li-main">' +
       '<div class="li-t">'+t.name+' <span class="tag" style="border-color:'+D.ROOT[t.el].c+';color:'+D.ROOT[t.el].c+'">'+D.ROOT[t.el].n+'</span> <span class="tag cyan">'+(t.typeN||'法宝')+'</span> <span class="tag gold">'+D.gradeName(t.g,t.s)+'</span> '+fitTag+'</div>' +
-      '<div class="li-d">'+t.affixes.map(function(a){ return a.sp ? '<span class="tag purple">'+a.n+'</span>' : a.n+' '+ (a.fmt==='flat'? a.v : '+'+U.pct(a.v,0)); }).join('　') +'</div>' +
+      '<div class="li-d">'+t.affixes.map(function(a){ return a.sp ? '<span class="tag purple">'+a.n+'</span>' : a.n+' '+ (a.fmt==='flat'? ((a.v>0?'+':'')+a.v) : '+'+U.pct(a.v,0)); }).join('　') +'</div>' +
       '</div><div style="flex:0 0 auto"><button class="sm primary" data-act="equip" data-arg="'+t.id+'">嵌入</button></div></div>';
   });
   h += '</div>';
