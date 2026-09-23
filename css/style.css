@@ -148,7 +148,7 @@ button.danger:hover{background:linear-gradient(180deg,#6b2b24,#3d1914);border-co
 /* ---------- 底部标签栏（两行宫格，一屏看全，不用横滑） ---------- */
 #tabs{
   flex:0 0 auto;display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(54px, 1fr));
+  grid-template-columns:repeat(auto-fill, minmax(74px, 1fr));
   gap:3px;
   padding:5px 6px calc(5px + env(safe-area-inset-bottom,0px));
   background:linear-gradient(0deg,rgba(8,9,7,.97),rgba(8,9,7,.8));
@@ -284,6 +284,15 @@ button.danger:hover{background:linear-gradient(180deg,#6b2b24,#3d1914);border-co
 .kv.small{font-size:11.5px}
 .statgrid{display:grid;grid-template-columns:1fr;gap:0}
 @media (max-width:960px){ .statgrid{grid-template-columns:1fr 1fr;gap:0 14px} }
+
+/* ---------- 子页切换条 ---------- */
+.subbar{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap}
+.subtab{
+  font-size:13px;padding:4px 14px;border-radius:14px;cursor:pointer;transition:.15s;
+  border:1px solid var(--line);color:var(--paper-dim);background:rgba(0,0,0,.3);letter-spacing:1px;
+}
+.subtab:hover{border-color:var(--line2);color:var(--paper)}
+.subtab.on{color:#12130f;background:var(--gold);border-color:var(--gold)}
 
 /* ---------- 当前指引 ---------- */
 .goal-top{
