@@ -87,8 +87,15 @@ UI.view_cultivate = function(){
       '</div></div>';
   }
 
-  /* ---------- 功法 ---------- */
-  h += UI.techPanelHtml();
+  /* ---------- 功法（管理已移至「人物 · 功法栏」） ---------- */
+  var learnedN2 = Object.keys(G.techs).length;
+  var sl2 = G.skillSlots();
+  h += '<div class="card tight"><h3>功法 <small>已悟 ' + learnedN2 + ' / ' + D.TECHS.length + '</small></h3>' +
+       '<div class="kv"><span>功法栏</span><b>主动 ' + G.skills.active.length + '/' + sl2.active +
+         '　被动 ' + G.skills.passive.length + '/' + sl2.passive + '</b></div>' +
+       '<div class="kv"><span>功法碎片</span><b class="val">' + G.shards + '</b></div>' +
+       '<div class="btnrow"><button class="primary" data-act="tab" data-arg="skill">前往功法栏（参悟 / 装备）</button></div>' +
+       '</div>';
   return h;
 };
 
@@ -302,6 +309,7 @@ UI.view_character = function(){
     }
   });
   h += '</div>';
+  h += UI.techPanelHtml();
 
   }
 
@@ -576,6 +584,7 @@ UI.view_array = function(){
   var sum = G.arraySummary();
   var h = '';
   h += '<div class="card"><h3>十二阵眼 <small>灵力 '+U.fmt(ad.total)+'</small></h3>';
+  h += '<div class="btnrow" style="margin:0 0 7px"><button class="primary" data-act="autoArr">自动布阵</button><button data-act="clearArr">清空阵眼</button></div>';
   h += '<div class="array-grid">';
   for (var i=0;i<12;i++){
     var nd = D.NODES12[i];
@@ -611,7 +620,6 @@ UI.view_array = function(){
          '<b class="'+(on?'pos':'mute')+'">全属性 +'+U.pct(t.all,0)+'</b></div>';
   });
   h += '<div class="sub">当前阵眼同属最多 <b class="val">'+(si.bestArr.n||0)+'</b> 件'+(si.bestArr.el?('（'+D.ROOT[si.bestArr.el].n+'）'):'')+'　·　装备位 <b class="val">'+(si.bestEq.n||0)+'</b> 件</div>';
-  h += '<div class="btnrow"><button data-act="autoArr">自动布阵</button><button data-act="clearArr">清空阵眼</button></div>';
   h += '</div>';
 
   // 选中阵眼
